@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.blog',
     'rest_framework',
+    'django_elasticsearch_dsl',
+    'apps.blog',
+    'apps.search',
 ]
 
 MIDDLEWARE = [
@@ -104,6 +106,14 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 25
+}
+
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": "https://localhost:9200",
+        # "http_auth": ("elastic", "hellonepal"),
+        # "ca_certs": "PATH_TO_http_ca.crt",
+    }
 }
 
 
