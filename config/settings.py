@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -110,9 +110,9 @@ REST_FRAMEWORK = {
 
 ELASTICSEARCH_DSL = {
     "default": {
-        "hosts": "https://localhost:9200",
-        "http_auth": ("elastic", "hellonepal"),
-        "ca_certs": "PATH_TO_http_ca.crt",
+        'hosts': os.getenv("ELASTICSEARCH_DSL_HOSTS", 'localhost:9200')
+        # "http_auth": ("elastic", "hVvhe+ewkQ85B+pytZ+P"),
+        # "ca_certs": "PATH_TO_http_ca.crt",
     }
 }
 
