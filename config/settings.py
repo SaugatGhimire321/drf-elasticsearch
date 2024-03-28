@@ -110,7 +110,7 @@ REST_FRAMEWORK = {
 
 ELASTICSEARCH_DSL = {
     "default": {
-        'hosts': os.getenv("ELASTICSEARCH_DSL_HOSTS", 'localhost:9200')
+        'hosts': os.getenv("ELASTICSEARCH_DSL_HOSTS", 'localhost:9200'),
         # "http_auth": ("elastic", "hVvhe+ewkQ85B+pytZ+P"),
         # "ca_certs": "PATH_TO_http_ca.crt",
     }
