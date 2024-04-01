@@ -73,10 +73,15 @@ ii. When you run the search_index command, it maps each row in a table to corres
 
 ![search_index](https://github.com/SaugatGhimire321/drf-elasticsearch/assets/96584301/12a26426-e321-4ab4-ab5c-aa94b5fd6716)
 
-here, it mapped 20 articles, 5 categories and 10 users to their corresponding indexes as documents. Whenever new row gets added, the indexes are also automatically updated.
+Here, it mapped 20 articles, 5 categories and 10 users to their corresponding indexes as documents. Whenever new row gets added, the indexes are also automatically updated.
 
 ![map_documents](https://github.com/SaugatGhimire321/drf-elasticsearch/assets/96584301/b1e35d0b-51a2-44e5-9e9e-1961b84de821)
 
+It also creates an ***Inverted Index*** for every token(word) in the database
+
+![inverted_index](https://github.com/SaugatGhimire321/drf-elasticsearch/assets/96584301/e15b6dca-4769-4846-a9b7-67154acd4fd0)
+
+When we search for a word, let's say "Indeed", it does not search through the whole document, rather it checks the reverse index and performs operations only on the documents that the token exists in. That's why elastic search is blazingly fast!
 
 But how did search_index command actually work? 
 
@@ -115,7 +120,7 @@ urlpatterns = [
 ]
 ```
 
-when we send any word or phrase we want to query, it goes to the corresponding view in search/views.py,
+When we send any word or phrase we want to query, it goes to the corresponding view in search/views.py,
 
 ```
 class SearchUsers(PaginatedElasticSearchAPIView):
@@ -172,7 +177,7 @@ The get method of PaginatedElasticSearchAPIView gets called, and since SearchUse
 
 ``` q = self.generate_q_expression(query) ```
 
-the implementation of generate_q_expression in SearchUsers class gets called, which is executed and paginated and the corresponding result is shown.
+The implementation of generate_q_expression in SearchUsers class gets called, which is executed and paginated and the corresponding result is shown.
 
 ![searchusers](https://github.com/SaugatGhimire321/drf-elasticsearch/assets/96584301/696f192d-7cc4-4ebb-8466-f9eed778d8cd)
 
@@ -195,7 +200,7 @@ class SearchArticles(PaginatedElasticSearchAPIView):
                 ], fuzziness="auto")
 ```
 
-this query is also similar to the above SearchUsers query, but it has a fuzziness attribute, which allows for some tolerance for typos or misspellings in the search term. "auto" setting lets the search engine choose the most appropriate level of fuzziness.
+This query is also similar to the above SearchUsers query, but it has a fuzziness attribute, which allows for some tolerance for typos or misspellings in the search term. "auto" setting lets the search engine choose the most appropriate level of fuzziness.
 
 For example, if I search hit this api endpoint,
 
@@ -205,5 +210,6 @@ This query can tolerate some level of typo and can still get search results for 
 
 ![indeed](https://github.com/SaugatGhimire321/drf-elasticsearch/assets/96584301/b5035c9d-eaa0-4c00-8ef5-9292e90c303b)
 
+This is only a basic implementation of ElasticSearch locally and it does not cover scalability and analysis part.
 To learn more about ElasticSearch queries and how the ELK Stack works, check out https://elastic.co
 
