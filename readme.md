@@ -2,67 +2,67 @@
 # Elasticsearch with Django Rest Framework
 
 ## Steps to run using docker
-  1. ### Create a virtual environment
-   ``` python3 -m virtualenv venv ```
+1. ### Create a virtual environment
+``` python3 -m virtualenv venv ```
 
-  2. ### Bring up the dockerized services
-  ```docker-compose up --build``` 
+2. ### Bring up the dockerized services
+```docker-compose up --build``` 
 
-  This is the docker-compose.yml file:
-  ```
-  version: '3.8'
+This is the docker-compose.yml file:
+```
+version: '3.8'
+
+services:
+  es:
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
+      environment:
+        - discovery.type=single-node
+        - xpack.security.enabled=false
+        - cluster.name=es
+      ports:
+      - "9200:9200"
+
+  web:
+      build: .
+      command: >
+        sh -c "python manage.py migrate &&
+              python manage.py runserver 0.0.0.0:8000"
+      volumes:
+        - .:/usr/src/app/
+      ports:
+        - 8000:8000
+      env_file:
+        - docker-compose.env
+      depends_on:
+        - es
+```
+
+This creates two different containers, the container es(Elasticsearch) pulls the Elasticsearch image from Docker Hub and runs on the port 9200 and the container web builds container from the Dockerfile in the root folder, and runs required migrations and starts the server.
+
+3. ### Populate database
+
+```docker-compose exec web python manage.py populate_db```
+
+This command populates user, category and articles using factory_boy and faker.
+
+4. ### Build index for the data in the database
+
+```docker-compose exec web python manage.py create_index  --rebuild```
+
+This command builds index for every single row and every single token(word) in the database. But what actually is an index in Elasticsearch? I'll explain after we run the project.
+
+5. ### Goto localhost:8000
+
+Here you can see 3 different api endpoints: admin, blog and search.
   
-  services:
-    es:
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.11.0
-        environment:
-          - discovery.type=single-node
-          - xpack.security.enabled=false
-          - cluster.name=es
-        ports:
-        - "9200:9200"
+blog - The blog endpoint contains 3 different endpoints, /users/, /categories/, and /articles/ that are used to list the corresponding users, article categories and articles. Click on any one endpoint and see what it returns.
   
-    web:
-        build: .
-        command: >
-          sh -c "python manage.py migrate &&
-                python manage.py runserver 0.0.0.0:8000"
-        volumes:
-          - .:/usr/src/app/
-        ports:
-          - 8000:8000
-        env_file:
-          - docker-compose.env
-        depends_on:
-          - es
-  ```
-
-  This creates two different containers, the container es(Elasticsearch) pulls the Elasticsearch image from Docker Hub and runs on the port 9200 and the container web builds container from the Dockerfile in the root folder, and runs required migrations and starts the server.
-
-  3. ### Populate database
-
-  ```docker-compose exec web python manage.py populate_db```
-
-  This command populates user, category and articles using factory_boy and faker.
-
-  4. ### Build index for the data in the database
-
-    ```docker-compose exec web python manage.py create_index  --rebuild```
-
-    This command builds index for every single row and every single token(word) in the database. But what actually is an index in Elasticsearch? I'll explain after we run the project.
-
-  5. ### Goto localhost:8000
-
-  Here you can see 3 different api endpoints: admin, blog and search.
+search - Now this is what we're interested in. If you go to the search endpoint, you can see 3 different endpoints where you can send a query and it returns corresponding data if it finds anything in the database.
   
-  blog - The blog endpoint contains 3 different endpoints, /users/, /categories/, and /articles/ that are used to list the corresponding users, article categories and articles. Click on any one endpoint and see what it returns.
-  
-  search - Now this is what we're interested in. If you go to the search endpoint, you can see 3 different endpoints where you can send a query and it returns corresponding data if it finds anything in the database.
-  
-  You saw how the data that matched the search query got returned, but how does elasticsearch actually work and why should we use it?
+You saw how the data that matched the search query got returned, but how does elasticsearch actually work and why should we use it?
 
 ## Without docker
-  If you don't want to use docker, you have to manually install elasticsearch and run on port 9200.
+If you don't want to use docker, you have to manually install elasticsearch and run on port 9200.
 
 
 # ElasticSearch
