@@ -46,7 +46,7 @@ This command populates user, category and articles using factory_boy and faker.
 
     ```docker-compose exec web python manage.py create_index  --rebuild```
 
-    This command builds index for every single row and every single token(word) in the database. But what actually is an index in elasticsearch? I'll explain after we run the project.
+    This command builds index for every single row and every single token(word) in the database. But what actually is an index in Elasticsearch? I'll explain after we run the project.
 
 3. ### Goto localhost:8000
 
@@ -137,6 +137,8 @@ class SearchUsers(PaginatedElasticSearchAPIView):
 ```
 
 Inside generate_q_expression, we see a elasticsearch query, which checks if username, or first_name or last_name ***exactly*** matches the query we sent, it returns True only if at least one condition (match in username, first_name, or last_name) is met.
+
+Note that the actual query looks very different if we try to execute the query directly in the Kibana console. The query inside Q is made pythonic which at last gets mapped to the low level query.
 
 But where do we use this function? See the PaginatedElasticSearchAPIView that we inhertied in SearchUsers class?
 
