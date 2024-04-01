@@ -16,7 +16,7 @@ class UserFactory(factory.django.DjangoModelFactory):
         model = User
         django_get_or_create = ('username',)
     
-    username = factory.Sequence(lambda n: "user_%d" % n)
+    username = factory.Sequence(lambda n: "user_%d" % (n+1))
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     password = "helloworld"
@@ -26,7 +26,7 @@ class CategoryFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Category
     
-    name = factory.Sequence(lambda n: "category_%d" % n)
+    name = factory.Sequence(lambda n: "category_%d" % (n+1))
     description = factory.Faker("sentence", nb_words=6)
 
 
